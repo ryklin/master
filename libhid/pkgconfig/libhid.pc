@@ -1,0 +1,10 @@
+prefix=/usr/local/stop/libhid
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libhid
+Description: HID access library
+Version: 0.2.16
+Libs: -L/usr/lib/x86_64-linux-gnu -lusb -L${libdir} -lhid
+Cflags:  -I${includedir}
