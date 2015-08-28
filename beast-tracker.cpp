@@ -44,7 +44,7 @@ using namespace FlyCapture2;
 using namespace cv;
 using namespace std;
 
-// Initialize 
+// Initialize
 comedi_t *devx;
 comedi_t *devy;
 #define SAMPLE_CT 5 // about as short as you can get
@@ -65,7 +65,7 @@ int nr_smooth_step = 4;
 Vec<float,4> smooth_x;
 Vec<float,4> smooth_y;
 
-Vec<float,2> offset; 
+Vec<float,2> offset;
 
 // initialize positions
 double xpos = 0;
@@ -130,10 +130,10 @@ char *cmd_src(int src,char *buf)
 // Comedi script for 2 channel analog output
 int comedi_internal_trigger_cust(comedi_t* device, int subdevice, int channelx, int channely, lsampl_t* dataxl, lsampl_t* datayl, int range, int aref)
 {
-   
+
   comedi_insn insn[2];
   comedi_insnlist il;
-  
+
   il.n_insns=2;
   il.insns=insn;
 
@@ -195,7 +195,7 @@ private:
 	struct addrinfo host_info;
 	struct addrinfo *host_info_list;
 	int socketfd;
-	const char *msg;	
+	const char *msg;
 	int len;
 	ssize_t bytes_sent;
 	ssize_t bytes_recieved;
@@ -211,7 +211,7 @@ public:
 		host_info.ai_socktype = SOCK_STREAM;
 		status = getaddrinfo(hostname, port, &host_info, &host_info_list);
 		if (status != 0) std::cout << "getaddrinfo error" << gai_strerror(status);
-		
+
 		std::cout << "Creating a socket... " << std::endl;
 		socketfd = socket(host_info_list->ai_family, host_info_list->ai_socktype, host_info_list->ai_protocol);
 		if (socketfd == -1) std::cout << "Socket error";
@@ -223,7 +223,7 @@ public:
 };
 
 // CStopWatch:
-// A simple timer class with Start, Stop, and GetDuration function calls 
+// A simple timer class with Start, Stop, and GetDuration function calls
 class CStopWatch{
 private:
 	clock_t start;
@@ -486,7 +486,7 @@ cv::Vec2f pupiltracker::cvx::majorAxis(const cv::RotatedRect& ellipse)
 
 // Ellipse algorithm
 
-namespace 
+namespace
 {
     struct section_guard
     {
@@ -649,7 +649,7 @@ bool pupiltracker::findPupilEllipse(
         double minResponse = std::numeric_limits<double>::infinity();
 
         for (int r = params.Radius_Min; r < params.Radius_Max; r+=rstep)
-        {   
+        {
             // Get Haar feature
             int r_inner = r;
             int r_outer = 3*r;
@@ -934,7 +934,7 @@ bool pupiltracker::findPupilEllipse(
                     double theta = i * 2*PI/params.StarburstPoints;
 
                     // Initialise centre and direction vector
-                    cv::Point2f pDir((float)std::cos(theta), (float)std::sin(theta));  
+                    cv::Point2f pDir((float)std::cos(theta), (float)std::sin(theta));
 
                     int t = 1;
                     cv::Point p = centre + (t * pDir);
@@ -1248,7 +1248,7 @@ bool pupiltracker::findPupilEllipse(
 
             EllipseRansac ransac(params, edgePoints, n, bbPupil, out.mPupilSobelX, out.mPupilSobelY);
             try
-            { 
+            {
                 tbb::parallel_reduce(tbb::blocked_range<size_t>(0,k,k/8), ransac);
             }
             catch (std::exception& e)
@@ -1374,7 +1374,7 @@ void orientation_trackbar(int,void*){
 }
 
 void centerx_trackbar(int,void*){
-	center_offset_x = xpos - cvFloor(0.5*max_rngx); 
+	center_offset_x = xpos - cvFloor(0.5*max_rngx);
 }
 
 void centery_trackbar(int,void*){
@@ -1427,7 +1427,7 @@ int main(){
         int buffer_length;
         subdevicex = -1;
 	subdevicey = -1;
-        
+
 	n_chan = 2;
 
         devx = comedi_open(comdevice);
@@ -1436,36 +1436,36 @@ int main(){
                 fprintf(stderr, "error opening %s\n", comdevice);
                 return -1;
         }
-	
+
 	if(devy == NULL){
 		fprintf(stderr,"error opening %s\n", comdevice2);
 		return -1;
 	}
-	
+
         if(subdevicex <0)
                 subdevicex = comedi_find_subdevice_by_type(devx, COMEDI_SUBD_AO, 0);
         assert(subdevicex >= 0);
-		
+
 	if(subdevicey <0)
 		subdevicey = comedi_find_subdevice_by_type(devy, COMEDI_SUBD_AO, 0);
 	assert(subdevicey >= 0);
-	
 
-        
+
+
 	maxdata_x = comedi_get_maxdata(devx, subdevicex, channelx);
         rng_x = comedi_get_range(devx, subdevicex, channelx, 0);
         max_rngx = maxdata_x;
-	 
+
 	maxdata_y = comedi_get_maxdata(devy, subdevicey, channely);
         rng_y = comedi_get_range(devy, subdevicey, channely, 0);
-	max_rngy = maxdata_y;	
+	max_rngy = maxdata_y;
 
 	// initialize timer rec
 	double delay;
 	CStopWatch sw;
-	
-	
-	
+
+
+
 	// save file
 	cout << "\nChoose a file name to save to. Defaults to current date and time...\n";
 	string input = "";
@@ -1483,7 +1483,7 @@ int main(){
 
 	filename.append(".csv");
 	const char *filen = filename.c_str();
-	
+
 	ofstream save_file (filen);
 
 	// Initialize camera for setup
@@ -1509,34 +1509,34 @@ int main(){
 			<< camInfo.serialNumber << std::endl;
 
 	//testing modes
-	//Format7PacketInfo fmt7PacketInfo;  
+	//Format7PacketInfo fmt7PacketInfo;
 	//Format7ImageSettings fmt7ImageSettings;
-	//fmt7ImageSettings.width   = col_size;  
-	//fmt7ImageSettings.height  = row_size;  
-	//fmt7ImageSettings.mode    = MODE_8;  
-	//fmt7ImageSettings.offsetX = 312;  
-	//fmt7ImageSettings.offsetY = 0;  
-	//fmt7ImageSettings.pixelFormat = PIXEL_FORMAT_MONO8; 
-	//bool valid;  
-	//error = cam.ValidateFormat7Settings( &fmt7ImageSettings,  
-        //               &valid,  
-    	// &fmt7PacketInfo );  
-	//unsigned int num_bytes =  
-  	 // fmt7PacketInfo.recommendedBytesPerPacket;     
-  
-	// Set Format 7 (partial image mode) settings  
-	//error = cam.SetFormat7Configuration( &fmt7ImageSettings,  
-        //                             num_bytes );  
-	//if ( error != PGRERROR_OK)  
-	//{  
-	//    PrintError( error );  
-	//    return -1;  
-	//}  
+	//fmt7ImageSettings.width   = col_size;
+	//fmt7ImageSettings.height  = row_size;
+	//fmt7ImageSettings.mode    = MODE_8;
+	//fmt7ImageSettings.offsetX = 312;
+	//fmt7ImageSettings.offsetY = 0;
+	//fmt7ImageSettings.pixelFormat = PIXEL_FORMAT_MONO8;
+	//bool valid;
+	//error = cam.ValidateFormat7Settings( &fmt7ImageSettings,
+        //               &valid,
+    	// &fmt7PacketInfo );
+	//unsigned int num_bytes =
+  	 // fmt7PacketInfo.recommendedBytesPerPacket;
+
+	// Set Format 7 (partial image mode) settings
+	//error = cam.SetFormat7Configuration( &fmt7ImageSettings,
+        //                             num_bytes );
+	//if ( error != PGRERROR_OK)
+	//{
+	//    PrintError( error );
+	//    return -1;
+	//}
 
 
 	//stop testing
 
-	
+
 		error = camera.StartCapture();
 	if(error==PGRERROR_ISOCH_BANDWIDTH_EXCEEDED){
 		std::cout << "bandwidth exceeded" << std::endl;
@@ -1546,7 +1546,7 @@ int main(){
 		std::cout << "failed to start image capture" << std::endl;
 		return false;
 	}
-	
+
 
 
 
@@ -1555,10 +1555,10 @@ int main(){
 	cout << "Position eye inside field of view\n";
 	cout << "ROI selection is now done automagically\n";
 	cout << "press c to continue\n";
-	char kb = 0;	
+	char kb = 0;
 	namedWindow("set",WINDOW_NORMAL);
-	
-	
+
+
 	Image tmpImage;
 	Image rgbTmp;
 	cv::Mat tmp;
@@ -1569,7 +1569,7 @@ int main(){
 			std::cout<< "capture error" << std::endl;
 			return false;
 		}
-		
+
 		// Convert image to OpenCV color scheme
 		tmpImage.Convert(FlyCapture2::PIXEL_FORMAT_BGR, &rgbTmp);
 
@@ -1577,9 +1577,9 @@ int main(){
 
 		tmp = cv::Mat(rgbTmp.GetRows(),rgbTmp.GetCols(),CV_8UC3,rgbTmp.GetData(),rowBytes);
 
-		xmax = tmp.cols;		
+		xmax = tmp.cols;
 		ymax = tmp.rows;
-	
+
 		imshow("set",tmp);
 
 		kb = cvWaitKey(30);
@@ -1589,12 +1589,12 @@ int main(){
 
 
 	// Initialize variables for sliders
-	
+
 	int dp = 1;
-	
+
 	// Min Dist
-	min_dist = 1;	
-	
+	min_dist = 1;
+
 	// Max radius
 	max_radius = 70;
 	max_radius_slider = 70;
@@ -1614,7 +1614,7 @@ int main(){
 	canny_threshold2 = 40;
 	canny_threshold2_slider_max = 100;
 	canny_threshold2_slider = 40;
-	
+
 	// Canny blur
 	canny_blur = 1;
 	canny_blur_slider_max = 10;
@@ -1634,7 +1634,7 @@ int main(){
 	record_video = 0;
 	rec_slider = 0;
 	rec_slider_max = 1;
-	
+
 	orientation = 0;
 	orientation_slider = 0;
 	orientation_slider_max = 1;
@@ -1646,7 +1646,7 @@ int main(){
 	Rect myROI(coordinates[0],coordinates[1],coordinates[2],coordinates[3]);
 	offset[0] = coordinates[0];
 	offset[1] = coordinates[1];
-	
+
 	// setup windows
 	namedWindow("window",WINDOW_NORMAL);
 	namedWindow("filtered",WINDOW_NORMAL);
@@ -1663,7 +1663,7 @@ int main(){
 	VideoWriter vid;
 	double fps = 20;
 	Size S = Size((int) rgbTmp.GetCols(), (int) rgbTmp.GetRows());
-	video_filename = video_filename.append("-video.avi"); 
+	video_filename = video_filename.append("-video.avi");
 	vid.open(video_filename,1196444237,fps,S,true);
 
 
@@ -1682,14 +1682,14 @@ int main(){
 	createTrackbar("downsample","control",&downsample_slider,downsample_slider_max,downsample_trackbar);
 	sw.Start(); // start timer
 	char key = 0;
-	
+
 	int reset = 1000;
 	int iter = 0;
 
 
 	// This is the main loop for the function
 	while(key != 'q'){
-		
+
 		//start timer
 		Image rawImage;
 		Error error = camera.RetrieveBuffer( &rawImage );
@@ -1723,13 +1723,13 @@ int main(){
         	pupiltracker::findPupilEllipse(params, image, out, log);
  		pupiltracker::cvx::cross(image, out.pPupil, 5, pupiltracker::cvx::rgb(255,255,0));
         	cv::ellipse(image, out.elPupil, pupiltracker::cvx::rgb(255,0,255));
-		
+
 		//scaling to output
 		//we also assume that the pupil cant be at the VERY edge of the FOV
 		xpos = ((out.pPupil.x - 16) / (xmax-32))*(double)max_rngx;
 		ypos = ((out.pPupil.y - 16) / (ymax-32))*(double)max_rngy;
-		
-		
+
+
 		//downsampling
 
                 n = SAMPLE_CT * sizeof(sampl_t);
@@ -1737,11 +1737,11 @@ int main(){
 			dataxl[0] = xpos;
 			datayl[0] = ypos;
                 }
-		//std::cout << "\r" << dataxl[0] << "," << datayl[0] << std::flush;
-		
+		std::cout << "\r" << dataxl[0] << "," << datayl[0] << std::flush;
+
 
 		ret = comedi_internal_trigger_cust(devx,subdevicex,channelx, channely,dataxl,datayl,range,aref);
-		
+
 		if (ret < 0){
 			comedi_perror("insn error");
 		}
@@ -1754,7 +1754,7 @@ int main(){
 			sw.Stop();
 	                delay = sw.GetDuration();
 		}
-		
+
 
 		if (video_display==1 or save_csv==1){
 			if (video_display==1){
@@ -1762,14 +1762,14 @@ int main(){
 				imshow("filtered", out.mPupilEdges);
 			sw.Stop();
 	                delay = sw.GetDuration();
-			
+
 			//std::cout << "\r" << delay << std::flush;
 			}
 		}
-		
+
 		key = waitKey(1);
 		sw.Start(); // restart timer
-		
+
 	}
-	
+
 }

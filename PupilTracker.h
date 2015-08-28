@@ -31,7 +31,7 @@ public:
         ss.setf(std::ios::fixed);
         ss << (val.elapsed()*1000.0) << "ms";
 	//std::cout.precision(17);
-	std::cout << key << "," << (val.elapsed()*1000.0) << std::endl;
+	//std::cout << key << "," << (val.elapsed()*1000.0) << std::endl;
         m_log.push_back(std::make_pair(key, ss.str()));
     }
 
@@ -43,7 +43,7 @@ public:
 private:
     std::vector< std::pair<std::string, std::string> > m_log;
 };
-    
+
 struct TrackerParams
 {
     int Radius_Min;
@@ -81,7 +81,7 @@ struct EdgePoint
 struct findPupilEllipse_out {
     cv::Rect roiHaarPupil;
     cv::Mat_<uchar> mHaarPupil;
-    
+
     cv::Mat_<float> histPupil;
     double threshold;
     cv::Mat_<uchar> mPupilThresh;
