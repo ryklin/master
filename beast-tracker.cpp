@@ -11,6 +11,7 @@
 #include <tbb/tbb.h>
 #include <random>
 #include <boost/foreach.hpp>
+#include <boost/circular_buffer.hpp>
 
 #include <string>
 #include <fstream>
@@ -1464,6 +1465,11 @@ int main(){
 	double delay;
 	CStopWatch sw;
 	
+	  //buffers for heuristic filtering
+  	boost::circular_buffer<double> buffer_x(4);
+  	boost::circular_buffer<double> buffer_y(4);
+  	double tmp1;
+  	double tmp2;
 	
 	
 	// save file
@@ -1726,18 +1732,118 @@ int main(){
 		
 		//scaling to output
 		//we also assume that the pupil cant be at the VERY edge of the FOV
-		xpos = ((out.pPupil.x - 16) / (xmax-32))*(double)max_rngx;
-		ypos = ((out.pPupil.y - 16) / (ymax-32))*(double)max_rngy;
+		xpos = ((out.pPupil.x - 100) / (xmax-200))*(double)max_rngx;
+		ypos = ((out.pPupil.y - 100) / (ymax-200))*(double)max_rngy;
 		
-		
-		//downsampling
+		if(buffer_x.size() < 3){
+      buffer_x.push_front(xpos);
+      buffer_y.push_front(ypos);
+    }
+    else{
+    buffer_x.push_front(xpos);
+    buffer_y.push_front(ypos);
+    // filter level 1
+    if(buffer_x[2] > buffer_x[1] && buffer_x[1] < buffer_x[0]){
+      tmp1 = std::abs(buffer_x[1] - buffer_x[0]);
+      tmp2 = std::abs(buffer_x[1] - buffer_x[2]);
 
-                n = SAMPLE_CT * sizeof(sampl_t);
-                for (i=0; i<SAMPLE_CT; i++){
-			dataxl[0] = xpos;
-			datayl[0] = ypos;
-                }
+      if(tmp2 > tmp1){
+        buffer_x[1] = buffer_x[0];
+      }
+      else{
+        buffer_x[1] = buffer_x[2] ;
+      }
+      buffer_x[3] = buffer_x[2];
+      buffer_x[2] = buffer_x[1];
+    }
+    else if(buffer_x[2] < buffer_x[1] && buffer_x[1] > buffer_x[0]){
+      tmp1 = std::abs(buffer_x[1] - buffer_x[0]);
+      tmp2 = std::abs(buffer_x[1] - buffer_x[2]);
+
+      if(tmp2 > tmp1){
+        buffer_x[1] = buffer_x[0];
+      }
+      else{
+        buffer_x[1] = buffer_x[2] ;
+      }
+
+      buffer_x[3] = buffer_x[2];
+      buffer_x[2] = buffer_x[1];
+    }
+    else{
+      buffer_x[3] = buffer_x[2];
+      buffer_x[2] = buffer_x[1];
+    }
+    if(buffer_y[2] > buffer_y[1] && buffer_y[1] < buffer_y[0]){
+      tmp1 = std::abs(buffer_y[1] - buffer_y[0]);
+      tmp2 = std::abs(buffer_y[1] - buffer_y[2]);
+
+      if(tmp2 > tmp1){
+        buffer_y[1] = buffer_y[0];
+      }
+      else{
+        buffer_y[1] = buffer_y[2] ;
+      }
+      buffer_y[3] = buffer_y[2];
+      buffer_y[2] = buffer_y[1];
+    }
+    else if(buffer_y[2] < buffer_y[1] && buffer_y[1] > buffer_y[0]){
+      tmp1 = std::abs(buffer_y[1] - buffer_y[0]);
+      tmp2 = std::abs(buffer_y[1] - buffer_y[2]);
+
+      if(tmp2 > tmp1){
+        buffer_y[1] = buffer_y[0];
+      }
+      else{
+        buffer_y[1] = buffer_y[2] ;
+      }
+
+      buffer_y[3] = buffer_y[2];
+      buffer_y[2] = buffer_y[1];
+    }
+    else{
+      buffer_y[3] = buffer_y[2];
+      buffer_y[2] = buffer_y[1];
+    }
+
+    //downsampling
+
+    //  n = SAMPLE_CT * sizeof(sampl_t);
+      //for (i=0; i<SAMPLE_CT; i++){
+			dataxl[0] = buffer_x[2];
+			datayl[0] = buffer_y[2];
+              //  }
 		//std::cout << "\r" << dataxl[0] << "," << datayl[0] << std::flush;
+
+
+		ret = comedi_internal_trigger_cust(devx,subdevicex,channelx, channely,dataxl,datayl,range,aref);
+
+    }
+
+		if (ret < 0){
+			comedi_perror("insn error");
+		}
+
+		usleep(1.1e1);
+
+		// Record the video - this is slow!!
+		if (record_video == 1){
+			vid.write(image);
+			sw.Stop();
+	                delay = sw.GetDuration();
+		}
+
+
+		if (video_display==1 or save_csv==1){
+			if (video_display==1){
+				imshow("window",image);
+				imshow("filtered", out.mPupilEdges);
+			sw.Stop();
+	                delay = sw.GetDuration();
+
+			//std::cout << "\r" << delay << std::flush;
+			}
+		}
 		
 
 		ret = comedi_internal_trigger_cust(devx,subdevicex,channelx, channely,dataxl,datayl,range,aref);
