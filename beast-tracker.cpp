@@ -60,11 +60,6 @@ int center_offset_x = 0;
 int center_offset_y = 0;
 int max_rngx;
 int max_rngy;
-int smooth_step = 0;
-int nr_smooth_step = 4;
-
-Vec<float,4> smooth_x;
-Vec<float,4> smooth_y;
 
 Vec<float,2> offset; 
 
@@ -1704,7 +1699,6 @@ int main(){
 			continue;
 		}
 
-		smooth_step =+ 1;
 		Image rgbImage;
 		rawImage.Convert(FlyCapture2::PIXEL_FORMAT_BGR, &rgbImage);
 		// convert to OpenCV Mat
