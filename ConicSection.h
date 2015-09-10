@@ -1,7 +1,7 @@
 #ifndef __PUPILTRACKER_CONIC_SECTION_H__
 #define __PUPILTRACKER_CONIC_SECTION_H__
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 
 namespace pupiltracker {
 
