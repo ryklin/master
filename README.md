@@ -1,7 +1,7 @@
 # master
 Eye Tracking for point gray cameras
 
-REQUIRES openCV > 2.7; TBB; BOOST; COMEDI...
+REQUIRES openCV > 3.0; TBB; BOOST; COMEDI...
 
 cmake .
 
