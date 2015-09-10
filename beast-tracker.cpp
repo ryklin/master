@@ -2,9 +2,9 @@
 // OpenCV offline
 #include "flycapture/FlyCapture2.h"
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <PupilTracker.h>
 #include <cvx.h>
 #include <utils.h>
@@ -21,7 +21,6 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <highgui.h>
 #include <time.h>
 #include <cstring>
 #include <sys/socket.h>
@@ -1488,7 +1487,7 @@ int main(){
 	ofstream save_file (filen);
 
 	// Initialize camera for setup
-	Error error;
+	FlyCapture2::Error error;
 	Camera camera;
 	CameraInfo camInfo;
 
@@ -1565,7 +1564,7 @@ int main(){
 	cv::Mat tmp;
 	while(kb != 'c'){
 		// Grab frame from buffer
-		Error error = camera.RetrieveBuffer(&tmpImage);
+		FlyCapture2::Error error = camera.RetrieveBuffer(&tmpImage);
 		if (error != PGRERROR_OK){
 			std::cout<< "capture error" << std::endl;
 			return false;
@@ -1693,7 +1692,7 @@ int main(){
 		
 		//start timer
 		Image rawImage;
-		Error error = camera.RetrieveBuffer( &rawImage );
+		FlyCapture2::Error error = camera.RetrieveBuffer( &rawImage );
 		if (error != PGRERROR_OK ){
 			std::cout << "capture error" << std::endl;
 			continue;
