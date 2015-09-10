@@ -2,7 +2,7 @@
 #define __PUPILTRACKER_CVX_H__
 
 #include <opencv2/core.hpp>
-#include <opencv2/core_c.h>
+//#include <opencv2/core_c.h>
 #include <opencv2/imgproc.hpp>
 
 #include <utils.h>
